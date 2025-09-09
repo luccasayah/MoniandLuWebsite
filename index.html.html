@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monique & Lucca - 1 Ano Juntos</title>
+    <style>
+        /* --- Core Design System & Global Styles --- */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap'); /* Font for "Monique e Lucca" */
+
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2a2a2a;
+            --accent-color-1: #ff4d4d; /* Deep Red */
+            --accent-color-2: #ffb8b8; /* Rose Gold/Pink */
+            --text-color: #ffffff;
+            --font-primary: 'Playfair Display', serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --font-handwriting: 'Dancing Script', cursive; /* New Font Variable */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* --- Custom Glowing Heart Cursor --- */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: transparent;
+            position: fixed;
+            z-index: 1001;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+
+        .cursor::before {
+            content: '❤️';
+            font-size: 24px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--accent-color-1);
+            text-shadow: 0 0 10px var(--accent-color-1), 0 0 20px var(--accent-color-1);
+        }
+
+        /* --- Music Bar --- */
+        .music-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .music-bar .song-info {
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        #play-pause-btn {
+            background: none;
+            border: 2px solid var(--accent-color-1);
+            color: var(--accent-color-1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        #play-pause-btn:hover {
+            background-color: var(--accent-color-1);
+            color: white;
+        }
+        
+        /* --- General Section Styling --- */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s, transform 1s;
+        }
+
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Intro Section (With new font) --- */
+        .intro {
+            text-align: center;
+        }
+        
+        .intro h2 {
+            font-family: var(--font-handwriting); /* FONT CHANGE */
+            font-size: clamp(3rem, 8vw, 5rem); /* Adjusted size for the new font */
+            color: var(--accent-color-2);
+            opacity: 0;
+            animation: fadeIn 2s 0.5s forwards;
+        }
+        
+        #days-counter {
+            font-size: clamp(6rem, 20vw, 12rem);
+            font-weight: 700;
+            font-family: var(--font-primary);
+            color: var(--accent-color-1);
+            line-height: 1;
+            margin: 20px 0;
+            text-shadow: 0 0 15px var(--accent-color-1);
+            opacity: 0;
+            animation: fadeIn 2s 1s forwards;
+        }
+
+        #days-counter span {
+             font-size: clamp(1.5rem, 5vw, 2.5rem);
+             color: var(--text-color);
+             font-weight: 400;
+             display: block;
+             margin-top: -10px;
+             opacity: 0;
+             animation: fadeIn 2s 1.5s forwards;
+        }
+        
+        /* --- Timeline Section --- */
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--accent-color-2);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .timeline-container {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            margin-bottom: 20px; /* Add some space between items */
+        }
+
+        .timeline-container.left { left: 0; }
+        .timeline-container.right { left: 50%; }
+
+        .timeline-container::after {
+            content: '♥';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            line-height: 22px;
+            text-align: center;
+            font-size: 1rem;
+            right: -17px;
+            background-color: var(--primary-color);
+            border: 4px solid var(--accent-color-1);
+            top: 25px;
+            border-radius: 50%;
+            z-index: 1;
+            color: var(--accent-color-1);
+        }
+
+        .right::after { left: -16px; }
+
+        .content {
+            padding: 20px 30px;
+            background-color: var(--secondary-color);
+            position: relative;
+            border-radius: 6px;
+        }
+        .content h3 {
+            font-family: var(--font-primary);
+            color: var(--accent-color-1);
+            margin-bottom: 10px;
+        }
+        .timeline-media {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .timeline-media img {
+            width: 100%;
+            max-width: 200px;
+            flex-grow: 1;
+            border-radius: 4px;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            width: 100%;
+            border-radius: 4px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- Final Message Section --- */
+        .final-message { text-align: center; }
+
+        .final-message h1 {
+            font-family: var(--font-primary);
+            font-size: clamp(4rem, 12vw, 8rem);
+            margin-bottom: 20px;
+            color: var(--accent-color-1);
+            animation: heartbeat 1.5s ease-in-out infinite both;
+        }
+        
+        .final-message p {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            animation: fadeIn 2s 1s forwards;
+            opacity: 0;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            background-color: var(--primary-color);
+        }
+
+        /* --- Floating Hearts Background --- */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--accent-color-1);
+            animation: float 10s infinite;
+            opacity: 0;
+        }
+        
+        /* --- Animations --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes heartbeat {
+            from { transform: scale(1); transform-origin: center center; animation-timing-function: ease-out; }
+            10% { transform: scale(0.91); animation-timing-function: ease-in; }
+            17% { transform: scale(0.98); animation-timing-function: ease-out; }
+            33% { transform: scale(0.87); animation-timing-function: ease-in; }
+            45% { transform: scale(1); animation-timing-function: ease-out; }
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh); opacity: 0; }
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .timeline::after { left: 31px; }
+            .timeline-container { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .timeline-container.left, .timeline-container.right { left: 0; }
+            .timeline-container::after, .right::after { left: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    <div class="floating-hearts"></div>
+    <div id="youtube-player" style="display: none;"></div>
+
+    <header class="music-bar">
+        <div class="song-info">🎵 Como é que a gente fica — Henrique & Juliano</div>
+        <button id="play-pause-btn">▶</button>
+    </header>
+
+    <section class="section intro">
+        <h2>Monique e Lucca</h2>
+        <div id="days-counter">0<span>dias</span></div>
+    </section>
+
+    <section class="section">
+        <div class="timeline">
+            <!-- DATE 1 -->
+            <div class="timeline-container left">
+                <div class="content">
+                    <h3>1 de Outubro de 2024</h3>
+                    <p>O início de tudo. Uma simples conversa que mal sabíamos que mudaria nossas vidas para sempre.</p>
+                </div>
+            </div>
+            <!-- DATE 2 -->
+            <div class="timeline-container right">
+                <div class="content">
+                    <h3>10 de Outubro de 2024</h3>
+                    <p>Aqui as coisas ficaram sérias. As conversas ficaram mais longas, e eu senti que algo incrível estava começando.</p>
+                </div>
+            </div>
+            <!-- DATE 3 -->
+            <div class="timeline-container left">
+                <div class="content">
+                    <h3>29 de Março de 2025</h3>
+                    <p>Seu sorriso nesse dia... mágico. Uma das minhas memórias favoritas.</p>
+                    <div class="timeline-media">
+                        <!-- REPLACE IMAGE 1: Go to base64-image.de, upload your image, copy the string and paste it below inside src="..." -->
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Memorable moment 1">
+                    </div>
+                </div>
+            </div>
+            <!-- DATE 4 -->
+            <div class="timeline-container right">
+                <div class="content">
+                    <h3>20 de Abril de 2025</h3>
+                    <p>Um dia que vale por dois! Cada foto aqui guarda uma história, um sentimento, um pedaço do que nos tornamos.</p>
+                     <div class="timeline-media">
+                        <!-- REPLACE IMAGE 2: Use a Base64 string for your second image -->
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Memorable moment 2">
+                        <!-- REPLACE IMAGE 3: Use a Base64 string for your third image -->
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Memorable moment 3">
+                    </div>
+                </div>
+            </div>
+            <!-- DATE 5 -->
+            <div class="timeline-container left">
+                <div class="content">
+                    <h3>21 de Abril de 2025</h3>
+                    <p>E quando eu achava que não podia melhorar, veio este dia. Um momento calmo e perfeito, só nosso.</p>
+                </div>
+            </div>
+            <!-- DATE 6 -->
+            <div class="timeline-container right">
+                <div class="content">
+                    <h3>24 de Junho de 2025</h3>
+                    <p>Ver esse vídeo sempre me faz sorrir. Um dia simples que se tornou inesquecível, apenas por estar com você.</p>
+                     <div class="timeline-media">
+                        <div class="video-container">
+                             <!-- REPLACE VIDEO ID: Upload your video to YouTube (as unlisted), and replace 'dQw4w9WgXcQ' below with your video's ID -->
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&mute=1&controls=1&loop=1&playlist=dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section final-message">
+        <div class="container">
+            <h1>Eu te amo</h1>
+            <p>Mal posso esperar para os próximos capítulos ao seu lado.</p>
+        </div>
+    </section>
+    
+    <footer>
+        Feito com amor por Lucca Sayah
+    </footer>
+
+
+    <script>
+        // --- YouTube IFrame Player API ---
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: '_X5-YFfT3cM', // Video ID for "Como é que a gente fica"
+                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': '_X5-YFfT3cM' },
+                events: { 'onReady': onPlayerReady }
+            });
+        }
+
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        let isPlaying = false;
+
+        function onPlayerReady(event) {
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    player.pauseVideo();
+                    playPauseBtn.textContent = '▶';
+                } else {
+                    player.playVideo();
+                    playPauseBtn.textContent = '❚❚';
+                }
+                isPlaying = !isPlaying;
+            });
+        }
+    
+        // --- Section Scroll Animation ---
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.2 });
+        sections.forEach(section => observer.observe(section));
+
+        // --- Custom Cursor ---
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.setAttribute("style", "top: "+(e.pageY)+"px; left: "+(e.pageX)+"px;")
+        });
+
+        // --- Floating Hearts ---
+        const floatingHearts = document.querySelector('.floating-hearts');
+        for (let i = 0; i < 20; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerText = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 8 + 's';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            floatingHearts.appendChild(heart);
+        }
+        
+        // --- Slower Days Counter Animation ---
+        const daysCounter = document.getElementById('days-counter');
+        const finalDays = 365;
+        let currentDay = 0;
+        let startTime = null;
+
+        function animateCounter(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            
+            // Calculate current day based on a 4-second animation duration (4000ms)
+            const animationDuration = 4000;
+            currentDay = Math.min(finalDays, Math.floor(progress / animationDuration * finalDays));
+
+            daysCounter.innerHTML = `${currentDay}<span>dias</span>`;
+
+            if (currentDay < finalDays) {
+                requestAnimationFrame(animateCounter);
+            }
+        }
+        
+        // Start after intro animations
+        setTimeout(() => {
+            requestAnimationFrame(animateCounter);
+        }, 1200);
+
+    </script>
+</body>
+</html>```
